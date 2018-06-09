@@ -6,7 +6,7 @@
 
 namespace sc{
 
-	template <class KeyType , class DataType>
+	template <typename KeyType, typename DataType>
 	class HashEntry
 	{
 		public:
@@ -19,7 +19,7 @@ namespace sc{
 			DataType m_data;
 	};
 
-	template < typename KeyType , typename DataType >
+	template < typename KeyType, typename DataType, typename KeyHash = std::hash <KeyType>, typename KeyEqual = std::equal_to<KeyType> >
 	class HashTbl 
 	{
 		public:

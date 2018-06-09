@@ -3,6 +3,8 @@
 
 struct Account
 {
+	using AccKey = std::tuple < std::string, int, int, int, double >;
+
 	std::string nome_cliente;
 	int codigo_banco;
 	int agencia;
@@ -15,5 +17,10 @@ struct Account
 		//Empty
 	}
 
-	std::tuple < std::string, int, int, int, double > get_key();
+	AccKey get_key()
+	{
+		auto t = std::make_tuple(nome_cliente, codigo_banco, agencia, num_conta, saldo);
+
+		return t;
+	}
 };

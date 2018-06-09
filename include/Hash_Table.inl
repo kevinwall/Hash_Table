@@ -81,8 +81,9 @@
 			return true;
 		}
 
-		
-		bool remove ( const KeyType & k_ ){
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		bool HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: remove ( const KeyType & k_ ){
+
 			KeyHash client;
 			KeyEqual equal;
 
@@ -101,20 +102,98 @@
 			}
 			
 			return false;
-				
-		}
-		bool retrieve ( const KeyType & k_ , DataType & d_ ) const;
-		void clear (void);
-		bool empty ( void ) const;
-		unsigned long int count ( void ) const;
-		void print () const;
 
-		private:
-		void rehash ();
-		unsigned int m_size;
-		unsigned int m_count;
-		std::forward_list <Entry> * m_data_table ;
-		static const short DEFAULT_SIZE = 11;
+		}
+
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		bool HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: retrieve ( const KeyType & k_ , DataType & d_ ) const{
+
+			KeyHash client;
+			KeyEqual equal;
+
+			auto end = client(k_) % m_size;
+			auto i = m_data_table[end].begin();
+
+			for(; i != m_data_table[end].end(); i++){
+				if(true == equal((*fast).m_key, k_)){
+					d_ = (*i).m_data;
+					return true;
+				}
+				i++;
+			}
+
+			return false;
+
+		}
+		
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: clear (void){
+
+			for( auto i = m_count; i > 0 ; i--){
+				m_data_table[i].~forward_list();
+			}
+
+			m_count = 0;
+
+		}
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		bool HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: empty ( void ) const{
+
+			return ( m_count == 0);
+
+		}
+		
+
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		unsigned long int HashTbl< KeyType, DataType, KeyHash, KeyEqual >::count ( void ) const{
+
+			return m_count;
+
+		}
+		
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: print () const{
+
+			KeyHash hash;
+
+			for( auto i = 0 ; i<m_size; i++0){
+				std::cout << i << " key = ";
+				for( auto & e : m_data_table[i]){
+					std::cout << hash(e.m_key)<< ";" << e;m_data << " ";
+				}
+				std::cout << std::endl;
+			}
+		}
+
+		template < typename KeyType, typename DataType, typename KeyHash, typename KeyEqual >
+		void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: rehash (){
+
+			unsigned long int newCapacity = FindPrime( 2* m_size );
+			std::list< Entry > *aux_data = new std::list< Entry > [newCapacity];
+			KeyHash client;
+
+			for(unsigned long int i = 0 ; i < m_size; i++){
+				if( m_data_table[i].empty()){
+					continue;
+				}
+
+				auto first = m_data_table[i].begin();
+
+				for(; first != m_data_table[i].end(); first++){
+					Entry aux( first->m_key, first->m_data );
+
+					unsigned long int hash = client(aux,m_key);
+					unsigned long int end( hash % newCapacity );
+
+					aux_data[end].push_back(aux);
+				}
+			}
+
+			~HashTbl();
+			m_data_table = aux_data;
+			m_size = newCapacity;
+		}
+
 	};
 
 

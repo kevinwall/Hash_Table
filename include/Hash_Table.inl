@@ -81,8 +81,28 @@
 			return true;
 		}
 
+		
+		bool remove ( const KeyType & k_ ){
+			KeyHash client;
+			KeyEqual equal;
+
+			auto end = client(k_) % m_size;
+			auto fast = m_data_table[end].begin();
+			auto slow = m_data_table[end].before_begin();
+
+			for(; fast !=  m_data_table[end].end(); fast++){
+				if(true == equal((*fast).m_key, k_)){
+					slow++;
+						m_data_table[end].erase_after(slow,fast);
+						m_count--;
+						return true;
+				}
+				fast++;
+			}
+			
+			return false;
+				
 		}
-		bool remove ( const KeyType & k_ );
 		bool retrieve ( const KeyType & k_ , DataType & d_ ) const;
 		void clear (void);
 		bool empty ( void ) const;

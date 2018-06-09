@@ -55,8 +55,33 @@
 			 m_size = 0;
 		}
 
+		emplate <class KeyType, class DataType, class KeyHash, class KeyEqual>
+		bool HashTbl<KeyType, DataType, KeyHash, KeyEqual>:: insert ( const KeyType & k_ , const DataType & d_ ) throw ( std::bad_alloc ){
 
-		bool insert ( const KeyType & k_ , const DataType & d_ );
+			KeyHash client;
+			KeyEqual equal;
+
+			if(mSize <= mCount) {
+			rehash();
+			}
+
+			auto end = client(k_) % m_size;
+			auto fast = m_data_table[end].begin();
+			auto slow = m_data_table[end].before_begin();
+
+			for(; fast !=  m_data_table[end].end(); fast++){
+				if(true == equal((*fast).m_key, k_)){
+					(*i).m_data = d_;
+					return false;
+				}
+			}
+
+			m_count++;
+			m_data_table[end].emplace_after(slow,k_,d_);
+			return true;
+		}
+
+		}
 		bool remove ( const KeyType & k_ );
 		bool retrieve ( const KeyType & k_ , DataType & d_ ) const;
 		void clear (void);

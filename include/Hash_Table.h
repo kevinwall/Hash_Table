@@ -1,8 +1,7 @@
-#include <forward_list>
-#include "Contas.h"
-
-#define Hash_Table_H
 #ifndef Hash_Table_H
+#define Hash_Table_H
+
+#include <forward_list>
 
 namespace sc{
 

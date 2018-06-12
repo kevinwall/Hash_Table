@@ -2,6 +2,7 @@
 #include <tuple>
 #include <utility>
 #include <iostream>
+#include "../include/Hash_Table.h"
 
 using AcctKey = std::tuple < std::string, int, int, int, double >;
 

@@ -1,15 +1,19 @@
+#include <forward_list>
+#include <iostream>
+
 #include "Hash_Table.h"
 
-namespace  sc{
+using namespace std;
+
 template <class KeyType, class DataType, class KeyHash, class KeyEqual>
 unsigned long int HashTbl<KeyType, DataType, KeyHash, KeyEqual>::FindPrime(int capacity) 
 {
 		
 int count = 0;
 		
-for(i = capacity; 1 < i && capacity <= i; i++) 
+for( auto i = capacity; 1 < i && capacity <= i; i++) 
 {
-	for(e = i - 1; 1 < e; e--) 
+	for(auto e = i - 1; 1 < e; e--) 
 	{
 		if(count == (capacity - 3) ) 
 		{
@@ -21,14 +25,16 @@ for(i = capacity; 1 < i && capacity <= i; i++)
 		}			
 	}
 
+	return capacity;
 }
 
 template <class KeyType, class DataType, class KeyHash, class KeyEqual>
-HashTbl<KeyType, DataType, KeyHash, KeyEqual>::HashTbl ( size_t tbl_size_ = DEFAULT_SIZE )
+HashTbl<KeyType, DataType, KeyHash, KeyEqual>::HashTbl ( size_t tbl_size_ )
 {
 
 	m_size = FindPrime( tbl_size_ );
-	mpDataTable = new std::list< Entry >[m_size];
+	unique_ptr<std::forward_list<Entry>[]> icon(new forward_list<Entry>[m_size]);
+    m_data_table = std::move(icon);
 	m_count = 0;
 
 }
@@ -38,7 +44,7 @@ template <class KeyType, class DataType, class KeyHash, class KeyEqual>
 HashTbl<KeyType, DataType, KeyHash, KeyEqual>::~HashTbl ()
 {
 
-	for( int i(0) ; i < m_size; ++i)
+	for( int i(0) ; i < (int)m_size; ++i)
 	{
 		m_data_table[i].~forward_list();
 	}
@@ -53,7 +59,7 @@ bool HashTbl<KeyType, DataType, KeyHash, KeyEqual>:: insert ( const KeyType & k_
 	KeyHash client;
 	KeyEqual equal;
 
-	if(mSize <= mCount) 
+	if(m_size <= m_count) 
 	{
 		rehash();
 	}
@@ -66,9 +72,10 @@ bool HashTbl<KeyType, DataType, KeyHash, KeyEqual>:: insert ( const KeyType & k_
 	{
 		if(true == equal((*fast).m_key, k_))
 		{
-			(*i).m_data = d_;
+			(*fast).m_data = d_;
 			return false;
 		}
+		slow++;
 	}
 
 	m_count++;
@@ -114,13 +121,13 @@ bool HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: retrieve ( const KeyType 
 
 	for(; i != m_data_table[end].end(); i++)
 	{
-		if(true == equal((*fast).m_key, k_))
+		if(true == equal((*i).m_key, k_))
 		{
 			d_ = (*i).m_data;
 			return true;
 		}
 
-		i++; //Aqui
+		//i++; //Aqui
 	}
 
 	return false;
@@ -163,12 +170,12 @@ void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: print () const{
 
 	KeyHash hash;
 
-	for( auto i = 0 ; i<m_size; i++0)
+	for( auto i = 0 ; i< (int )m_size; i++)
 	{
 		std::cout << i << " key = ";
 		for( auto & e : m_data_table[i])
 		{
-			std::cout << hash(e.m_key)<< ";" << e;m_data << " ";
+			std::cout << hash(e.m_key)<< ";" << e.m_data.nome_cliente << " ";
 		}
 		
 		std::cout << std::endl;
@@ -181,8 +188,10 @@ template < typename KeyType, typename DataType, typename KeyHash, typename KeyEq
 void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: rehash (){
 
 	unsigned long int newCapacity = FindPrime( 2* m_size );
-	std::list< Entry > *aux_data = new std::list< Entry > [newCapacity];
+	unique_ptr<std::forward_list<Entry>[]> icon(new forward_list<Entry>[newCapacity]);
+	std::unique_ptr< std::forward_list< Entry > [] > aux_data = std::move(icon);
 	KeyHash client;
+
 
 	for(unsigned long int i = 0 ; i < m_size; i++)
 	{
@@ -197,15 +206,15 @@ void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: rehash (){
 		{
 			Entry aux( first->m_key, first->m_data );
 
-			unsigned long int hash = client(aux,m_key);
+			unsigned long int hash = client(aux.m_key);
 			unsigned long int end( hash % newCapacity );
 
-			aux_data[end].push_back(aux);
+			m_data_table[end].push_front(aux);
 		}
 	}
 
-	~HashTbl();
-	m_data_table = aux_data;
+	this->~HashTbl();
+	m_data_table = std::move(aux_data);
 	m_size = newCapacity;
 }
-}
+

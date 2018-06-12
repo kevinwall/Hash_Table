@@ -1,14 +1,9 @@
-<<<<<<< HEAD
-=======
-#include <forward_list>
 
-
-#define Hash_Table_H
->>>>>>> 61bf39f46dfe3f447886de3605912fb38ac43714
 #ifndef Hash_Table_H
 #define Hash_Table_H
 
 #include <forward_list>
+#include <memory>
 
 namespace sc{
 
@@ -32,8 +27,8 @@ namespace sc{
 			using Entry = HashEntry < KeyType , DataType >;
 
 			HashTbl (size_t tbl_size_ = DEFAULT_SIZE);
-			virtual ~HashTbl ();
-			bool insert (const KeyType & k_ , const DataType & d_);
+			virtual ~HashTbl();
+			bool insert (const KeyType & k_ , const DataType & d_) throw ( std::bad_alloc );
 			bool remove (const KeyType & k_);
 			bool retrieve (const KeyType & k_ , DataType & d_) const;
 			void clear (void);
@@ -45,8 +40,9 @@ namespace sc{
 			void rehash();
 			unsigned int m_size;
 			unsigned int m_count;
-			std::forward_list <Entry> *m_data_table;
+			std::unique_ptr< std::forward_list< Entry > [] > m_data_table;
 			static const short DEFAULT_SIZE = 11;
+			unsigned long int FindPrime(int capacity) ;
 	};
 
 	#include "Hash_Table.inl"

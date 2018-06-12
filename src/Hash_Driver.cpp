@@ -28,6 +28,7 @@ struct Account
 
 		return t;
 	}
+
 };
 
 struct KeyHash
@@ -59,22 +60,54 @@ struct KeyEqual
 
 int main()
 {
-	sc::HashTbl<KeyType, DataType, KeyHash, KeyEqual> accounts(14);
+	sc::HashTbl<AcctKey, Account, KeyHash, KeyEqual> accounts(20);
 
-	Account conta("Zé das drogas", 1, 13, 74, 15.00);
-	Account conta_2("Zezo", 1, 13, 74, 15.00);
+	Account conta[] = {
+		{"Kevin", 1, 13, 74, 15.00},
+		{"Renato", 1, 18, 5666, 56.66},
+		{"Douglas", 16, 7, 900, 17.4},
+		{"Michael", 1, 4, 3000, 123.4},
+		{"Maria", 1, 3, 233, 543.1},
+		{"Larissa", 1, 16, 36, 135.56},
+	};
 
-	accounts.insert( conta.get_key(), conta);
+	auto way = sizeof(conta) / sizeof(Account);
+
+	for( auto i(0u) ; i < way ; i++){
+		accounts.insert(conta[i].get_key(),conta[i]);
+	}
 
 	accounts.print();
 
-	KeyHash chave;
+	AcctKey acckey;
+	Account test;
+	std::cout<< std::endl;
 
-	KeyEqual igual;
+	while( getline(std::cin,std::get<0>(acckey))){
+		std::cout << " Nome do cliente:";
+		std::cin >> std::get<0>(acckey);
 
-	std::cout<<((chave(conta.get_key()))%23)<<std::endl;
+		std::cout << " Codigo do banco:";
+		std::cin >> std::get<1>(acckey);
 
-	std::cout<<igual(conta.get_key(), conta_2.get_key())<<std::endl;
+		std::cout << " Agencia: ";
+		std::cin >> std::get<2>(acckey);
+
+		std::cout << "Numero do banco: ";
+		std::cin >> std::get<3>(acckey);
+
+		std::cout << " Saldo: ";
+		std::cin >> std::get<4>(acckey);
+
+		if(accounts.retrieve( acckey, test)){
+			std::cout << test.nome_cliente << " " << test.codigo_banco << " " << test.agencia << " " << test.num_conta << " " << test.saldo << " ";
+			accounts.remove( test.get_key());
+		}else{
+			std::cout << " Account " << std::get<0>(acckey) << " " << std::get<1>(acckey) << std::get<2>(acckey) << std::get<3>(acckey) << std::get<4>(acckey) ;
+		}
+	}
+
+	accounts.print();
 
 	return 0;
 }

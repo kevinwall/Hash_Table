@@ -1,6 +1,6 @@
 #include "Hash_Table.h"
 
-
+namespace  sc{
 template <class KeyType, class DataType, class KeyHash, class KeyEqual>
 unsigned long int HashTbl<KeyType, DataType, KeyHash, KeyEqual>::FindPrime(int capacity) 
 {
@@ -96,7 +96,7 @@ bool HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: remove ( const KeyType & 
 			return true;
 		}
 
-		fast++; //Aqui
+		//fast++; //Aqui
 	}
 			
 	return false;
@@ -207,4 +207,5 @@ void HashTbl< KeyType, DataType, KeyHash, KeyEqual >:: rehash (){
 	~HashTbl();
 	m_data_table = aux_data;
 	m_size = newCapacity;
+}
 }

@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+#include <forward_list>
+
+
+#define Hash_Table_H
+>>>>>>> 61bf39f46dfe3f447886de3605912fb38ac43714
 #ifndef Hash_Table_H
 #define Hash_Table_H
 

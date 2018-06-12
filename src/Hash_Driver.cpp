@@ -4,6 +4,8 @@
 #include <iostream>
 #include "../include/Hash_Table.h"
 
+#include "../include/Hash_Table.h"
+
 using AcctKey = std::tuple < std::string, int, int, int, double >;
 
 struct Account
@@ -57,8 +59,14 @@ struct KeyEqual
 
 int main()
 {
+	sc::HashTbl<KeyType, DataType, KeyHash, KeyEqual> accounts(14);
+
 	Account conta("Zé das drogas", 1, 13, 74, 15.00);
 	Account conta_2("Zezo", 1, 13, 74, 15.00);
+
+	accounts.insert( conta.get_key(), conta);
+
+	accounts.print();
 
 	KeyHash chave;
 
